@@ -24,6 +24,12 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     if (_cachedScene == null || _cachedCubeDefinition != currentDefinition) {
       _cachedCubeDefinition = currentDefinition;
       _cachedScene = Scene();
+      // Set balanced brightness and sharpness
+      _cachedScene!.environment.environmentMap = EnvironmentMap.empty();
+      _cachedScene!.environment.intensity = 2.5; // Strong ambient light
+      _cachedScene!.environment.exposure = 3.5; // High exposure for brightness
+      // Disable anti-aliasing for sharper edges
+      _cachedScene!.antiAliasingMode = AntiAliasingMode.none;
       _buildRubiksCube(_cachedScene!);
     }
     return _cachedScene!;
@@ -34,6 +40,12 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     super.initState();
     _cachedCubeDefinition = widget.cube.definition;
     _cachedScene = Scene();
+    // Set balanced brightness and sharpness
+    _cachedScene!.environment.environmentMap = EnvironmentMap.empty();
+    _cachedScene!.environment.intensity = 2.5; // Strong ambient light
+    _cachedScene!.environment.exposure = 3.5; // High exposure for brightness
+    // Disable anti-aliasing for sharper edges
+    _cachedScene!.antiAliasingMode = AntiAliasingMode.none;
     _buildRubiksCube(_cachedScene!);
   }
 
@@ -41,7 +53,7 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     scene.removeAll();
     
     const cubeSize = 2.0;
-    const gap = 0.01;
+    const gap = 0.008; // Balanced gap for clean edges
     const stickerSize = (cubeSize - gap * 2) / 3;
     const halfSize = cubeSize / 2;
     const stickerDepth = 0.02;
@@ -75,21 +87,6 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
       
       for (int row = 0; row < 3; row++) {
         for (int col = 0; col < 3; col++) {
-          final color = _getColor(faceData[row][col]);
-          final material = UnlitMaterial();
-          material.baseColorFactor = vm.Vector4(
-            color.red / 255.0,
-            color.green / 255.0,
-            color.blue / 255.0,
-            1.0,
-          );
-          material.vertexColorWeight = 0.0;
-          
-          // Sticker geometry: width x height x depth
-          // Default orientation: extends along +X, +Y, +Z from center
-          final geometry = CuboidGeometry(vm.Vector3(stickerSize, stickerSize, stickerDepth));
-          final mesh = Mesh(geometry, material);
-          
           // Calculate sticker position in face-local coordinates
           // Row 0 is top, row 2 is bottom; Col 0 is left, col 2 is right
           final offsetX = (stickerSize + gap) * (col - 1);
@@ -105,8 +102,39 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
           final rotated = rotation * stickerOffset;
           final transform = vm.Matrix4.translation(faceCenter) * rotated;
           
-          final node = Node(localTransform: transform, mesh: mesh);
-          scene.add(node);
+          // Create integrated border as part of the sticker piece
+          const borderWidth = 0.02; // Thick integrated border
+          const innerStickerSize = stickerSize - borderWidth * 2; // Inner colored area
+          
+          // Create black border frame (outer frame, part of the piece)
+          final borderMaterial = UnlitMaterial();
+          borderMaterial.baseColorFactor = vm.Vector4(0.0, 0.0, 0.0, 1.0); // Black
+          borderMaterial.vertexColorWeight = 0.0;
+          
+          // Outer border frame - this is the base of the sticker piece
+          final borderGeometry = CuboidGeometry(vm.Vector3(stickerSize, stickerSize, stickerDepth));
+          final borderMesh = Mesh(borderGeometry, borderMaterial);
+          final borderNode = Node(localTransform: transform, mesh: borderMesh);
+          scene.add(borderNode);
+          
+          // Create colored inner sticker (raised center, part of the same piece)
+          final color = _getColor(faceData[row][col]);
+          final material = UnlitMaterial();
+          // Use balanced brightness for sharp, vibrant colors
+          material.baseColorFactor = vm.Vector4(
+            (color.red / 255.0) * 1.7, // Multiply by 1.7 for bright but balanced
+            (color.green / 255.0) * 1.7,
+            (color.blue / 255.0) * 1.7,
+            1.0,
+          );
+          material.vertexColorWeight = 0.0;
+          
+          // Inner colored sticker (slightly raised to show it's part of the piece)
+          final innerGeometry = CuboidGeometry(vm.Vector3(innerStickerSize, innerStickerSize, stickerDepth * 1.1));
+          final innerMesh = Mesh(innerGeometry, material);
+          // Same position as outer border, so it's integrated
+          final innerNode = Node(localTransform: transform, mesh: innerMesh);
+          scene.add(innerNode);
         }
       }
     }
@@ -140,17 +168,17 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
   Color _getColor(FaceColor color) {
     switch (color) {
       case FaceColor.white:
-        return const Color(0xFFFFFFFF);
+        return const Color(0xFFFFFFFF); // Pure white
       case FaceColor.yellow:
-        return const Color(0xFFFFEB3B);
+        return const Color(0xFFFFFF00); // Pure yellow (maximum brightness)
       case FaceColor.red:
-        return const Color(0xFFE53935);
+        return const Color(0xFFFF0022); // Maximum saturated red
       case FaceColor.orange:
-        return const Color(0xFFFF6F00);
+        return const Color(0xFFFF4400); // Maximum saturated orange
       case FaceColor.green:
-        return const Color(0xFF4CAF50);
+        return const Color(0xFF00FF22); // Maximum saturated green
       case FaceColor.blue:
-        return const Color(0xFF2196F3);
+        return const Color(0xFF0066FF); // Maximum saturated blue
     }
   }
 
