@@ -7,6 +7,8 @@ class GameControls extends StatelessWidget {
   final VoidCallback onReset;
   final Function(String) onMove;
   final bool isSolving;
+  final bool showManualControls;
+  final VoidCallback onToggleManualControls;
 
   const GameControls({
     super.key,
@@ -16,6 +18,8 @@ class GameControls extends StatelessWidget {
     required this.onReset,
     required this.onMove,
     required this.isSolving,
+    required this.showManualControls,
+    required this.onToggleManualControls,
   });
 
   @override
@@ -61,26 +65,57 @@ class GameControls extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
 
-        // Manual controls
+        // Manual controls toggle
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Manual',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white54,
-                  fontWeight: FontWeight.w500,
-                ),
+          child: InkWell(
+            onTap: onToggleManualControls,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 12),
-              _buildManualControls(),
-            ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Manual Controls',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  AnimatedRotation(
+                    turns: showManualControls ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white70,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
+        ),
+
+        // Manual controls (collapsible with animation)
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: showManualControls
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 12, left: 20, right: 20),
+                  child: _buildManualControls(),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );

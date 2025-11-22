@@ -38,6 +38,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   List<String> solution = [];
   bool isSolving = false;
   String statusMessage = 'Ready';
+  bool showManualControls = false;
 
   @override
   void initState() {
@@ -215,6 +216,12 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
               onReset: _resetCube,
               onMove: _applyMove,
               isSolving: isSolving,
+              showManualControls: showManualControls,
+              onToggleManualControls: () {
+                setState(() {
+                  showManualControls = !showManualControls;
+                });
+              },
             ),
 
             const SizedBox(height: 20),
