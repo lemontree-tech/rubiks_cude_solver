@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 class SolutionPanel extends StatelessWidget {
   final List<String> solution;
   final int appliedMovesCount;
+  final bool isAutoApplying;
   final VoidCallback? onUndo;
   final VoidCallback? onApplyNext;
+  final VoidCallback onAutoApply;
 
   const SolutionPanel({
     super.key,
     required this.solution,
     required this.appliedMovesCount,
+    required this.isAutoApplying,
     this.onUndo,
     this.onApplyNext,
+    required this.onAutoApply,
   });
 
   @override
@@ -100,6 +104,12 @@ class SolutionPanel extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          _buildStepButton(
+            isAutoApplying ? '⏸ Stop' : '▶ Auto Apply',
+            isAutoApplying ? Icons.pause : Icons.play_arrow,
+            onAutoApply,
           ),
         ],
       ),

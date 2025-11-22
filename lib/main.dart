@@ -39,6 +39,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   List<String> solution = [];
   int appliedMovesCount = 0;
   bool isSolving = false;
+  bool isAutoApplying = false;
   String statusMessage = 'Ready';
   bool showManualControls = false;
 
@@ -54,6 +55,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       cube.scramble(25);
       solution = [];
       appliedMovesCount = 0;
+      isAutoApplying = false;
       statusMessage = 'Scrambled';
     });
   }
@@ -66,6 +68,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       statusMessage = 'Solving...';
       solution = [];
       appliedMovesCount = 0;
+      isAutoApplying = false;
     });
 
     try {
@@ -96,12 +99,54 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
     setState(() {
       solution = [];
       appliedMovesCount = 0;
+      isAutoApplying = false;
       statusMessage = 'Ready';
     });
   }
 
+  void _startAutoApply() async {
+    if (isAutoApplying || solution.isEmpty) return;
+
+    setState(() {
+      isAutoApplying = true;
+      statusMessage = 'Auto applying...';
+    });
+
+    while (appliedMovesCount < solution.length && isAutoApplying) {
+      await Future.delayed(const Duration(milliseconds: 750));
+      
+      if (!isAutoApplying) break; // Check if stopped
+      
+      setState(() {
+        cube.applyMove(solution[appliedMovesCount]);
+        appliedMovesCount++;
+        statusMessage = 'Auto: $appliedMovesCount / ${solution.length}';
+      });
+    }
+
+    setState(() {
+      isAutoApplying = false;
+      if (appliedMovesCount >= solution.length) {
+        statusMessage = 'Solution complete';
+      } else {
+        statusMessage = 'Auto apply stopped';
+      }
+    });
+  }
+
+  void _stopAutoApply() {
+    setState(() {
+      isAutoApplying = false;
+      if (appliedMovesCount > 0) {
+        statusMessage = 'Step $appliedMovesCount / ${solution.length}';
+      } else {
+        statusMessage = '${solution.length} moves found';
+      }
+    });
+  }
+
   void _applyNextStep() {
-    if (appliedMovesCount < solution.length) {
+    if (appliedMovesCount < solution.length && !isAutoApplying) {
       setState(() {
         cube.applyMove(solution[appliedMovesCount]);
         appliedMovesCount++;
@@ -111,7 +156,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
 
   void _undoLastStep() {
-    if (appliedMovesCount > 0) {
+    if (appliedMovesCount > 0 && !isAutoApplying) {
       setState(() {
         appliedMovesCount--;
         // Apply inverse move to undo
@@ -145,6 +190,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       cube = RubiksCube();
       solution = [];
       appliedMovesCount = 0;
+      isAutoApplying = false;
       statusMessage = 'Ready';
     });
   }
@@ -210,8 +256,10 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
               SolutionPanel(
                 solution: solution,
                 appliedMovesCount: appliedMovesCount,
-                onUndo: appliedMovesCount > 0 ? _undoLastStep : null,
-                onApplyNext: appliedMovesCount < solution.length ? _applyNextStep : null,
+                isAutoApplying: isAutoApplying,
+                onUndo: appliedMovesCount > 0 && !isAutoApplying ? _undoLastStep : null,
+                onApplyNext: appliedMovesCount < solution.length && !isAutoApplying ? _applyNextStep : null,
+                onAutoApply: isAutoApplying ? _stopAutoApply : _startAutoApply,
               ),
 
             const SizedBox(height: 10),
