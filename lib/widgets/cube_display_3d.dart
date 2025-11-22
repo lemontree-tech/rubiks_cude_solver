@@ -29,83 +29,69 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     scene.removeAll();
     
     const cubeSize = 2.0;
-    const gap = 0.02;
+    const gap = 0.01;
     const stickerSize = (cubeSize - gap * 2) / 3;
     const halfSize = cubeSize / 2;
-    const stickerDepth = 0.01;
+    const stickerDepth = 0.02;
 
+    // Face configurations: each face has a normal direction and position
+    // The stickers are positioned in a plane perpendicular to the normal
     final faceConfigs = [
-      {'pos': vm.Vector3(0, halfSize + stickerDepth/2, 0), 'rot': vm.Vector3(-math.pi / 2, 0, 0), 'idx': 0}, // Top
-      {'pos': vm.Vector3(0, -halfSize - stickerDepth/2, 0), 'rot': vm.Vector3(math.pi / 2, 0, 0), 'idx': 1}, // Bottom
-      {'pos': vm.Vector3(0, 0, halfSize + stickerDepth/2), 'rot': vm.Vector3(0, 0, 0), 'idx': 2}, // Front
-      {'pos': vm.Vector3(0, 0, -halfSize - stickerDepth/2), 'rot': vm.Vector3(0, math.pi, 0), 'idx': 3}, // Back
-      {'pos': vm.Vector3(halfSize + stickerDepth/2, 0, 0), 'rot': vm.Vector3(0, math.pi / 2, 0), 'idx': 4}, // Right
-      {'pos': vm.Vector3(-halfSize - stickerDepth/2, 0, 0), 'rot': vm.Vector3(0, -math.pi / 2, 0), 'idx': 5}, // Left
+      // Top face (0) - white, at y = +halfSize, normal pointing up (+Y)
+      {'normal': vm.Vector3(0, 1, 0), 'pos': vm.Vector3(0, halfSize + stickerDepth/2, 0), 'idx': 0},
+      // Bottom face (1) - yellow, at y = -halfSize, normal pointing down (-Y)
+      {'normal': vm.Vector3(0, -1, 0), 'pos': vm.Vector3(0, -halfSize - stickerDepth/2, 0), 'idx': 1},
+      // Front face (2) - red, at z = +halfSize, normal pointing forward (+Z)
+      {'normal': vm.Vector3(0, 0, 1), 'pos': vm.Vector3(0, 0, halfSize + stickerDepth/2), 'idx': 2},
+      // Back face (3) - orange, at z = -halfSize, normal pointing backward (-Z)
+      {'normal': vm.Vector3(0, 0, -1), 'pos': vm.Vector3(0, 0, -halfSize - stickerDepth/2), 'idx': 3},
+      // Right face (4) - green, at x = +halfSize, normal pointing right (+X)
+      {'normal': vm.Vector3(1, 0, 0), 'pos': vm.Vector3(halfSize + stickerDepth/2, 0, 0), 'idx': 4},
+      // Left face (5) - blue, at x = -halfSize, normal pointing left (-X)
+      {'normal': vm.Vector3(-1, 0, 0), 'pos': vm.Vector3(-halfSize - stickerDepth/2, 0, 0), 'idx': 5},
     ];
 
     for (final config in faceConfigs) {
       final faceIndex = config['idx'] as int;
       final faceData = widget.cube.faces[faceIndex];
-      final faceRot = config['rot'] as vm.Vector3;
-      final facePos = config['pos'] as vm.Vector3;
+      final faceNormal = config['normal'] as vm.Vector3;
+      final faceCenter = config['pos'] as vm.Vector3;
       
-      // Create rotation matrix for the face
-      final faceRotation = vm.Matrix4.identity();
-      faceRotation.rotateX(faceRot.x);
-      faceRotation.rotateY(faceRot.y);
-      faceRotation.rotateZ(faceRot.z);
+      // Build rotation matrix to align face normal with +Z (for sticker positioning)
+      // Then we'll translate to face center
+      final rotation = _rotationToAlignNormal(faceNormal);
       
-      for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-          final color = _getColor(faceData[i][j]);
+      for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+          final color = _getColor(faceData[row][col]);
           final material = UnlitMaterial();
-          // Use RGB values directly (0-1 range)
           material.baseColorFactor = vm.Vector4(
             color.red / 255.0,
             color.green / 255.0,
             color.blue / 255.0,
             1.0,
           );
-          // Ensure vertex color weight is 0 to use only base color
           material.vertexColorWeight = 0.0;
           
+          // Sticker geometry: width x height x depth
+          // Default orientation: extends along +X, +Y, +Z from center
           final geometry = CuboidGeometry(vm.Vector3(stickerSize, stickerSize, stickerDepth));
           final mesh = Mesh(geometry, material);
           
           // Calculate sticker position in face-local coordinates
-          final offsetX = (stickerSize + gap) * (j - 1);
-          final offsetY = (stickerSize + gap) * (1 - i);
+          // Row 0 is top, row 2 is bottom; Col 0 is left, col 2 is right
+          final offsetX = (stickerSize + gap) * (col - 1);
+          final offsetY = (stickerSize + gap) * (1 - row); // Invert Y so row 0 is top
           
-          // Sticker offset in face-local space (before rotation)
-          vm.Vector3 localOffset;
-          if (faceIndex == 0 || faceIndex == 1) {
-            // Top/Bottom: offset in XZ plane
-            localOffset = vm.Vector3(offsetX, 0, offsetY);
-          } else if (faceIndex == 2 || faceIndex == 3) {
-            // Front/Back: offset in XY plane
-            localOffset = vm.Vector3(offsetX, offsetY, 0);
-          } else {
-            // Right/Left: offset in YZ plane
-            localOffset = vm.Vector3(0, offsetY, offsetX);
-          }
+          // Position sticker in XY plane (Z will be the depth/offset from face)
+          // After rotation, this will align with the face normal
+          final stickerLocalPos = vm.Vector3(offsetX, offsetY, stickerDepth / 2);
           
-          // Build transform: translate to face position, then apply rotation, then apply sticker offset
-          // Order: T(facePos) * R(faceRot) * T(localOffset)
-          final transform = vm.Matrix4.identity();
-          
-          // First, translate to face position
-          transform.setTranslation(facePos);
-          
-          // Then apply face rotation
-          final rotMatrix = vm.Matrix4.identity();
-          rotMatrix.rotateX(faceRot.x);
-          rotMatrix.rotateY(faceRot.y);
-          rotMatrix.rotateZ(faceRot.z);
-          transform.multiply(rotMatrix);
-          
-          // Finally, apply sticker offset in the rotated coordinate system
-          final offsetMatrix = vm.Matrix4.translation(localOffset);
-          transform.multiply(offsetMatrix);
+          // Build transform: rotate to align with face, then translate to face center
+          // Order: T(faceCenter) * R(rotation) * T(stickerLocalPos)
+          final stickerOffset = vm.Matrix4.translation(stickerLocalPos);
+          final rotated = rotation * stickerOffset;
+          final transform = vm.Matrix4.translation(faceCenter) * rotated;
           
           final node = Node(localTransform: transform, mesh: mesh);
           scene.add(node);
@@ -114,20 +100,45 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     }
   }
 
+  // Build rotation matrix to align +Z axis with the given normal
+  vm.Matrix4 _rotationToAlignNormal(vm.Vector3 normal) {
+    // Default normal is +Z (0, 0, 1)
+    if (normal.x == 0 && normal.y == 0 && normal.z == 1) {
+      // Front face - no rotation needed
+      return vm.Matrix4.identity();
+    } else if (normal.x == 0 && normal.y == 0 && normal.z == -1) {
+      // Back face - rotate 180 degrees around Y
+      return vm.Matrix4.rotationY(math.pi);
+    } else if (normal.x == 0 && normal.y == 1 && normal.z == 0) {
+      // Top face - rotate -90 degrees around X
+      return vm.Matrix4.rotationX(-math.pi / 2);
+    } else if (normal.x == 0 && normal.y == -1 && normal.z == 0) {
+      // Bottom face - rotate 90 degrees around X
+      return vm.Matrix4.rotationX(math.pi / 2);
+    } else if (normal.x == 1 && normal.y == 0 && normal.z == 0) {
+      // Right face - rotate 90 degrees around Y
+      return vm.Matrix4.rotationY(math.pi / 2);
+    } else if (normal.x == -1 && normal.y == 0 && normal.z == 0) {
+      // Left face - rotate -90 degrees around Y
+      return vm.Matrix4.rotationY(-math.pi / 2);
+    }
+    return vm.Matrix4.identity();
+  }
+
   Color _getColor(FaceColor color) {
     switch (color) {
       case FaceColor.white:
-        return const Color(0xFFFFFFFF); // Pure white
+        return const Color(0xFFFFFFFF);
       case FaceColor.yellow:
-        return const Color(0xFFFFEB3B); // Bright yellow (matches 2D)
+        return const Color(0xFFFFEB3B);
       case FaceColor.red:
-        return const Color(0xFFE53935); // Red (matches 2D)
+        return const Color(0xFFE53935);
       case FaceColor.orange:
-        return const Color(0xFFFF6F00); // Orange (matches 2D)
+        return const Color(0xFFFF6F00);
       case FaceColor.green:
-        return const Color(0xFF4CAF50); // Green (matches 2D)
+        return const Color(0xFF4CAF50);
       case FaceColor.blue:
-        return const Color(0xFF2196F3); // Blue (matches 2D)
+        return const Color(0xFF2196F3);
     }
   }
 
@@ -171,7 +182,6 @@ class _ScenePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Calculate camera position based on rotation
     final distance = 5.0;
     final cameraX = math.sin(rotationY) * math.cos(rotationX) * distance;
     final cameraY = -math.sin(rotationX) * distance;
