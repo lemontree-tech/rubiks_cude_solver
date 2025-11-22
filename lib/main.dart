@@ -252,15 +252,20 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
             ),
 
             // Solution display
-            if (solution.isNotEmpty)
-              SolutionPanel(
-                solution: solution,
-                appliedMovesCount: appliedMovesCount,
-                isAutoApplying: isAutoApplying,
-                onUndo: appliedMovesCount > 0 && !isAutoApplying ? _undoLastStep : null,
-                onApplyNext: appliedMovesCount < solution.length && !isAutoApplying ? _applyNextStep : null,
-                onAutoApply: isAutoApplying ? _stopAutoApply : _startAutoApply,
-              ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: solution.isNotEmpty
+                  ? SolutionPanel(
+                      solution: solution,
+                      appliedMovesCount: appliedMovesCount,
+                      isAutoApplying: isAutoApplying,
+                      onUndo: appliedMovesCount > 0 && !isAutoApplying ? _undoLastStep : null,
+                      onApplyNext: appliedMovesCount < solution.length && !isAutoApplying ? _applyNextStep : null,
+                      onAutoApply: isAutoApplying ? _stopAutoApply : _startAutoApply,
+                    )
+                  : const SizedBox.shrink(),
+            ),
 
             const SizedBox(height: 10),
 
