@@ -103,13 +103,15 @@ class SolutionPanel extends StatelessWidget {
                   onApplyNext,
                 ),
               ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildStepButton(
+                  isAutoApplying ? '⏸ Stop' : '▶ Auto',
+                  isAutoApplying ? Icons.pause : Icons.play_arrow,
+                  onAutoApply,
+                ),
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          _buildStepButton(
-            isAutoApplying ? '⏸ Stop' : '▶ Auto Apply',
-            isAutoApplying ? Icons.pause : Icons.play_arrow,
-            onAutoApply,
           ),
         ],
       ),
