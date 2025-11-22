@@ -27,28 +27,36 @@ class CubeDisplay extends StatelessWidget {
           final maxFaceWidth = (actualWidth - spacing - (borderWidth * 4) - stickerMargins - buffer) / 4;
           final actualStickerSize = (maxFaceWidth / 3.3).clamp(18.0, 28.0);
 
+          // Build an invisible spacer face with same dimensions
+          final spacerFace = Opacity(
+            opacity: 0.0,
+            child: _buildFace(cube.faces[5], actualStickerSize),
+          );
+          
           return Column(
             children: [
-              // Top face
+              // Top face - aligned with front face (using same structure as middle row)
               _buildFaceRow([
-                null,
-                _buildFace(cube.faces[0], actualStickerSize),
-                null,
+                spacerFace, // Left (invisible spacer)
+                _buildFace(cube.faces[0], actualStickerSize), // Top (in front position)
+                spacerFace, // Right (invisible spacer)
+                spacerFace, // Back (invisible spacer)
               ]),
               const SizedBox(height: 8),
               // Middle row
               _buildFaceRow([
-                _buildFace(cube.faces[5], actualStickerSize),
-                _buildFace(cube.faces[2], actualStickerSize),
-                _buildFace(cube.faces[4], actualStickerSize),
-                _buildFace(cube.faces[3], actualStickerSize),
+                _buildFace(cube.faces[5], actualStickerSize), // Left
+                _buildFace(cube.faces[2], actualStickerSize), // Front
+                _buildFace(cube.faces[4], actualStickerSize), // Right
+                _buildFace(cube.faces[3], actualStickerSize), // Back
               ]),
               const SizedBox(height: 8),
-              // Bottom face
+              // Bottom face - aligned with front face (using same structure as middle row)
               _buildFaceRow([
-                null,
-                _buildFace(cube.faces[1], actualStickerSize),
-                null,
+                spacerFace, // Left (invisible spacer)
+                _buildFace(cube.faces[1], actualStickerSize), // Bottom (in front position)
+                spacerFace, // Right (invisible spacer)
+                spacerFace, // Back (invisible spacer)
               ]),
             ],
           );
