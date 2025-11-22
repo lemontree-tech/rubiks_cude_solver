@@ -125,6 +125,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
               padding: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Rubik Solver',
@@ -134,11 +135,16 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                       color: Colors.white,
                     ),
                   ),
-                  Text(
-                    statusMessage,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
+                  Flexible(
+                    child: Text(
+                      statusMessage,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                      ),
+                      textAlign: TextAlign.right,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
