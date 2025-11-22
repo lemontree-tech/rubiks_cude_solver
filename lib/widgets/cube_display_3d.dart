@@ -16,16 +16,28 @@ class CubeDisplay3D extends StatefulWidget {
 class _CubeDisplay3DState extends State<CubeDisplay3D> {
   double _rotationX = -0.5;
   double _rotationY = 0.5;
-  late Scene scene;
+  Scene? _cachedScene;
+  String? _cachedCubeDefinition;
+
+  Scene get _currentScene {
+    final currentDefinition = widget.cube.definition;
+    if (_cachedScene == null || _cachedCubeDefinition != currentDefinition) {
+      _cachedCubeDefinition = currentDefinition;
+      _cachedScene = Scene();
+      _buildRubiksCube(_cachedScene!);
+    }
+    return _cachedScene!;
+  }
 
   @override
   void initState() {
     super.initState();
-    scene = Scene();
-    _buildRubiksCube();
+    _cachedCubeDefinition = widget.cube.definition;
+    _cachedScene = Scene();
+    _buildRubiksCube(_cachedScene!);
   }
 
-  void _buildRubiksCube() {
+  void _buildRubiksCube(Scene scene) {
     scene.removeAll();
     
     const cubeSize = 2.0;
@@ -146,6 +158,9 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final cubeSize = math.min(size.width, size.height) * 0.5;
+    
+    // Get current scene (will rebuild if cube changed)
+    final scene = _currentScene;
 
     return GestureDetector(
       onPanUpdate: (details) {
@@ -159,7 +174,8 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
         width: cubeSize,
         height: cubeSize,
         child: CustomPaint(
-          painter: _ScenePainter(scene, _rotationX, _rotationY),
+          key: ValueKey(widget.cube.definition),
+          painter: _ScenePainter(scene, _rotationX, _rotationY, widget.cube.definition),
         ),
       ),
     );
@@ -168,17 +184,19 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
   @override
   void didUpdateWidget(CubeDisplay3D oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.cube != widget.cube) {
-      _buildRubiksCube();
+    // Invalidate cache if cube changed, so getter will rebuild
+    if (oldWidget.cube.definition != widget.cube.definition) {
+      _cachedScene = null;
     }
   }
 }
 
 class _ScenePainter extends CustomPainter {
-  _ScenePainter(this.scene, this.rotationX, this.rotationY);
+  _ScenePainter(this.scene, this.rotationX, this.rotationY, this.cubeDefinition);
   final Scene scene;
   final double rotationX;
   final double rotationY;
+  final String cubeDefinition; // Track cube state for repaint detection
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -197,6 +215,9 @@ class _ScenePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ScenePainter oldDelegate) {
-    return oldDelegate.rotationX != rotationX || oldDelegate.rotationY != rotationY;
+    // Repaint if rotation OR cube state changes
+    return oldDelegate.rotationX != rotationX || 
+           oldDelegate.rotationY != rotationY ||
+           oldDelegate.cubeDefinition != cubeDefinition;
   }
 }

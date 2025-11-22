@@ -14,6 +14,9 @@ class RubiksCube {
   // Delegate to cuber's cube
   bool get isSolved => _cube.isSolved;
 
+  // Get cube definition for state comparison
+  String get definition => _cube.definition;
+
   void scramble(int moves) {
     _cube = Algorithm.scramble(n: moves).apply(Cube.solved);
   }
