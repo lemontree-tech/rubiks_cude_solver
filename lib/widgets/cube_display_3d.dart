@@ -28,8 +28,8 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
       _cachedScene!.environment.environmentMap = EnvironmentMap.empty();
       _cachedScene!.environment.intensity = 2.5; // Strong ambient light
       _cachedScene!.environment.exposure = 3.5; // High exposure for brightness
-      // Disable anti-aliasing for sharper edges
-      _cachedScene!.antiAliasingMode = AntiAliasingMode.none;
+      // Enable MSAA for smooth, anti-aliased edges (smooth borders like vector graphics)
+      _cachedScene!.antiAliasingMode = AntiAliasingMode.msaa;
       _buildRubiksCube(_cachedScene!);
     }
     return _cachedScene!;
@@ -44,8 +44,8 @@ class _CubeDisplay3DState extends State<CubeDisplay3D> {
     _cachedScene!.environment.environmentMap = EnvironmentMap.empty();
     _cachedScene!.environment.intensity = 2.5; // Strong ambient light
     _cachedScene!.environment.exposure = 3.5; // High exposure for brightness
-    // Disable anti-aliasing for sharper edges
-    _cachedScene!.antiAliasingMode = AntiAliasingMode.none;
+    // Enable MSAA for smooth, anti-aliased edges (smooth borders like vector graphics)
+    _cachedScene!.antiAliasingMode = AntiAliasingMode.msaa;
     _buildRubiksCube(_cachedScene!);
   }
 
