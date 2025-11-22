@@ -69,14 +69,18 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
 
       setState(() {
         solution = moves;
-        statusMessage = solution.isEmpty
-            ? 'Solved'
-            : '${solution.length} moves';
+        if (solution.isEmpty) {
+          statusMessage = 'Already solved or no solution found';
+        } else {
+          statusMessage = '${solution.length} moves found';
+        }
         isSolving = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Solve error: $e');
+      print('Stack: $stackTrace');
       setState(() {
-        statusMessage = 'Error';
+        statusMessage = 'Error: ${e.toString()}';
         isSolving = false;
       });
     }
