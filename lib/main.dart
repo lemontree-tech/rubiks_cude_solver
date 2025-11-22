@@ -92,16 +92,11 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
     }
   }
 
-  void _applySolution() {
-    if (solution.isEmpty) return;
-
+  void _closeSolution() {
     setState(() {
-      for (var move in solution) {
-        cube.applyMove(move);
-      }
-      statusMessage = 'Applied';
       solution = [];
       appliedMovesCount = 0;
+      statusMessage = 'Ready';
     });
   }
 
@@ -211,12 +206,13 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
             ),
 
             // Solution display
-            SolutionPanel(
-              solution: solution,
-              appliedMovesCount: appliedMovesCount,
-              onUndo: appliedMovesCount > 0 ? _undoLastStep : null,
-              onApplyNext: appliedMovesCount < solution.length ? _applyNextStep : null,
-            ),
+            if (solution.isNotEmpty)
+              SolutionPanel(
+                solution: solution,
+                appliedMovesCount: appliedMovesCount,
+                onUndo: appliedMovesCount > 0 ? _undoLastStep : null,
+                onApplyNext: appliedMovesCount < solution.length ? _applyNextStep : null,
+              ),
 
             const SizedBox(height: 10),
 
@@ -224,7 +220,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
             GameControls(
               onScramble: _scrambleCube,
               onSolve: _solveCube,
-              onApplySolution: solution.isNotEmpty ? _applySolution : null,
+              onCloseSolution: solution.isNotEmpty ? _closeSolution : null,
               onReset: _resetCube,
               onMove: _applyMove,
               isSolving: isSolving,

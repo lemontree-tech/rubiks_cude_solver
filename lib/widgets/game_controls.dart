@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GameControls extends StatelessWidget {
   final VoidCallback onScramble;
   final VoidCallback onSolve;
-  final VoidCallback? onApplySolution;
+  final VoidCallback? onCloseSolution;
   final VoidCallback onReset;
   final Function(String) onMove;
   final bool isSolving;
@@ -14,7 +14,7 @@ class GameControls extends StatelessWidget {
     super.key,
     required this.onScramble,
     required this.onSolve,
-    this.onApplySolution,
+    this.onCloseSolution,
     required this.onReset,
     required this.onMove,
     required this.isSolving,
@@ -49,11 +49,11 @@ class GameControls extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: onApplySolution != null
+                child: onCloseSolution != null
                     ? _buildButton(
-                        icon: Icons.play_arrow,
-                        label: 'Apply',
-                        onPressed: onApplySolution,
+                        icon: Icons.close,
+                        label: 'Close',
+                        onPressed: onCloseSolution,
                       )
                     : _buildButton(
                         icon: Icons.refresh,
