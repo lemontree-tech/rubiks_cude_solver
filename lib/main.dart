@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'models/cube.dart';
 import 'services/solver.dart';
-import 'widgets/cube_display.dart';
+import 'widgets/cube_display_2d.dart';
+import 'widgets/cube_display_3d.dart';
 import 'widgets/game_controls.dart';
 import 'widgets/solution_panel.dart';
 
@@ -42,6 +43,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   bool isAutoApplying = false;
   String statusMessage = 'Ready';
   bool showManualControls = false;
+  bool is3DMode = false;
 
   @override
   void initState() {
@@ -239,15 +241,38 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
               ),
             ),
 
+            // Display mode toggle
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildModeButton('2D', !is3DMode, () {
+                    setState(() {
+                      is3DMode = false;
+                    });
+                  }),
+                  const SizedBox(width: 12),
+                  _buildModeButton('3D', is3DMode, () {
+                    setState(() {
+                      is3DMode = true;
+                    });
+                  }),
+                ],
+              ),
+            ),
+
             // Cube display
             Expanded(
               child: Center(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: CubeDisplay(cube: cube),
-                  ),
-                ),
+                child: is3DMode
+                    ? CubeDisplay3D(cube: cube)
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: CubeDisplay2D(cube: cube),
+                        ),
+                      ),
               ),
             ),
 
@@ -287,6 +312,36 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
 
             const SizedBox(height: 20),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeButton(String label, bool isSelected, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? Colors.white.withOpacity(0.2)
+                : Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: isSelected
+                ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? Colors.white : Colors.white70,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );
