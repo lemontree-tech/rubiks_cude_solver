@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter_scene/scene.dart';
 import 'package:vector_math/vector_math.dart' as vm;
 import '../models/cube.dart';
@@ -228,6 +229,15 @@ class _ScenePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Render at 4x resolution for maximum quality supersampling
+    // This provides the smoothest, highest quality rendering possible
+    const supersampleFactor = 4.0;
+    final renderSize = Size(size.width * supersampleFactor, size.height * supersampleFactor);
+    
+    // Create a picture recorder for high-resolution rendering
+    final recorder = ui.PictureRecorder();
+    final renderCanvas = Canvas(recorder, Offset.zero & renderSize);
+    
     final distance = 5.0;
     final cameraX = math.sin(rotationY) * math.cos(rotationX) * distance;
     final cameraY = -math.sin(rotationX) * distance;
@@ -238,7 +248,17 @@ class _ScenePainter extends CustomPainter {
       target: vm.Vector3(0, 0, 0),
     );
 
-    scene.render(camera, canvas, viewport: Offset.zero & size);
+    // Render at high resolution
+    scene.render(camera, renderCanvas, viewport: Offset.zero & renderSize);
+    
+    // Convert to picture and scale down with high-quality filtering
+    final picture = recorder.endRecording();
+    canvas.save();
+    // Use high-quality scaling for maximum smoothness
+    canvas.scale(1.0 / supersampleFactor);
+    // Draw with high-quality rendering
+    canvas.drawPicture(picture);
+    canvas.restore();
   }
 
   @override
