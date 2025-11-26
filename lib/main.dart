@@ -91,6 +91,11 @@ class RubiksCubeSolverApp extends StatelessWidget {
               }
               
               // Check for language code match (e.g., zh without country)
+              // For Chinese, prefer Hong Kong (zh_HK) as default
+              if (locale.languageCode == 'zh') {
+                return const Locale('zh', 'HK');
+              }
+              
               for (final supportedLocale in supportedLocales) {
                 if (supportedLocale.languageCode == locale.languageCode) {
                   return supportedLocale;
