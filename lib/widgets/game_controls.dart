@@ -9,6 +9,7 @@ class GameControls extends StatelessWidget {
   final bool isSolving;
   final bool showManualControls;
   final VoidCallback onToggleManualControls;
+  final VoidCallback? onEdit;
 
   const GameControls({
     super.key,
@@ -20,6 +21,7 @@ class GameControls extends StatelessWidget {
     required this.isSolving,
     required this.showManualControls,
     required this.onToggleManualControls,
+    this.onEdit,
   });
 
   @override
@@ -67,42 +69,75 @@ class GameControls extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // Manual controls toggle
+        // Manual controls toggle with edit button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: InkWell(
-            onTap: onToggleManualControls,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Manual Controls',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
+          child: Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: onToggleManualControls,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Manual Controls',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        AnimatedRotation(
+                          turns: showManualControls ? 0.5 : 0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white70,
+                            size: 20,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  AnimatedRotation(
-                    turns: showManualControls ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white70,
-                      size: 20,
+                ),
+              ),
+              if (onEdit != null) ...[
+                const SizedBox(width: 12),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onEdit,
+                    borderRadius: BorderRadius.circular(22),
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.white70,
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            ],
           ),
         ),
 

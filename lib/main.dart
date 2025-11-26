@@ -238,24 +238,13 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Rubik Solver',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 20),
-                        onPressed: _toggleManualInput,
-                        color: Colors.white70,
-                        tooltip: 'Manual Input',
-                      ),
-                    ],
+                  const Text(
+                    'Rubik Solver',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                    ),
                   ),
                   Flexible(
                     child: Text(
@@ -340,6 +329,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                   showManualControls = !showManualControls;
                 });
               },
+              onEdit: _toggleManualInput,
             ),
 
             const SizedBox(height: 20),
