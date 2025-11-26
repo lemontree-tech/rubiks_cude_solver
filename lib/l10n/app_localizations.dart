@@ -120,6 +120,12 @@ abstract class AppLocalizations {
   /// **'Rubik Solver'**
   String get appTitle;
 
+  /// App store description
+  ///
+  /// In en, this message translates to:
+  /// **'Solve 3x3 Rubik\'s cubes with step-by-step solutions. Features 2D and 3D cube visualization, manual cube input, and automatic solving algorithms.'**
+  String get appDescription;
+
   /// No description provided for @ready.
   ///
   /// In en, this message translates to:

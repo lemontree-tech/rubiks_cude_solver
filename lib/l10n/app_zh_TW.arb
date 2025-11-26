@@ -1,6 +1,7 @@
 {
   "@@locale": "zh_TW",
   "appTitle": "魔方求解器",
+  "appDescription": "使用分步解決方案解決3x3魔方。具有2D和3D立方體可視化、手動魔方輸入和自動求解算法。",
   "ready": "就緒",
   "scrambled": "已打亂",
   "solving": "求解中...",

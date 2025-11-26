@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "Solveur de Rubik's Cube";
+
+/* App Description (for App Store) */
+CFBundleName = "Solveur de Rubik's Cube";
+

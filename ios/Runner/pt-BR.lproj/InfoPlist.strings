@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "Solucionador de Cubo Mágico";
+
+/* App Description (for App Store) */
+CFBundleName = "Solucionador de Cubo Mágico";
+

@@ -12,6 +12,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appTitle => 'Solucionador de Cubo Mágico';
 
   @override
+  String get appDescription =>
+      'Resolva cubos mágicos 3x3 com soluções passo a passo. Inclui visualização 2D e 3D do cubo, entrada manual do cubo e algoritmos de resolução automática.';
+
+  @override
   String get ready => 'Pronto';
 
   @override
@@ -115,6 +119,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get appTitle => 'Solucionador de Cubo Mágico';
+
+  @override
+  String get appDescription =>
+      'Resolva cubos mágicos 3x3 com soluções passo a passo. Inclui visualização 2D e 3D do cubo, entrada manual do cubo e algoritmos de resolução automática.';
 
   @override
   String get ready => 'Pronto';

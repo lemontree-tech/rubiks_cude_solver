@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "Rubik's Cube Löser";
+
+/* App Description (for App Store) */
+CFBundleName = "Rubik's Cube Löser";
+

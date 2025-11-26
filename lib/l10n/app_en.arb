@@ -4,6 +4,10 @@
   "@appTitle": {
     "description": "The title of the application"
   },
+  "appDescription": "Solve 3x3 Rubik's cubes with step-by-step solutions. Features 2D and 3D cube visualization, manual cube input, and automatic solving algorithms.",
+  "@appDescription": {
+    "description": "App store description"
+  },
   "ready": "Ready",
   "scrambled": "Scrambled",
   "solving": "Solving...",

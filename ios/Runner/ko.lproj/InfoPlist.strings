@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "루빅스 큐브 솔버";
+
+/* App Description (for App Store) */
+CFBundleName = "루빅스 큐브 솔버";
+

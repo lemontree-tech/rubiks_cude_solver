@@ -12,6 +12,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Solucionador de Cubo de Rubik';
 
   @override
+  String get appDescription =>
+      'Resuelve cubos de Rubik 3x3 con soluciones paso a paso. Incluye visualización 2D y 3D del cubo, entrada manual del cubo y algoritmos de resolución automática.';
+
+  @override
   String get ready => 'Listo';
 
   @override

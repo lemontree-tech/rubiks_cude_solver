@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "魔方求解器";
+
+/* App Description (for App Store) */
+CFBundleName = "魔方求解器";
+

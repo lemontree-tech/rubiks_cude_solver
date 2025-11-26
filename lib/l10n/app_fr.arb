@@ -1,6 +1,7 @@
 {
   "@@locale": "fr",
   "appTitle": "Solveur de Rubik's Cube",
+  "appDescription": "Résolvez des cubes de Rubik 3x3 avec des solutions étape par étape. Comprend la visualisation 2D et 3D du cube, la saisie manuelle du cube et les algorithmes de résolution automatique.",
   "ready": "Prêt",
   "scrambled": "Mélangé",
   "solving": "Résolution...",

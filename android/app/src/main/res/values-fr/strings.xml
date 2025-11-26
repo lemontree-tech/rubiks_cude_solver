@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Solveur de Rubik\'s Cube</string>
+    <string name="app_description">Résolvez des cubes de Rubik 3x3 avec des solutions étape par étape. Comprend la visualisation 2D et 3D du cube, la saisie manuelle du cube et les algorithmes de résolution automatique.</string>
+</resources>
+

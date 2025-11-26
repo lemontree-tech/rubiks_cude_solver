@@ -12,6 +12,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appTitle => 'Rubik\'s Cube Löser';
 
   @override
+  String get appDescription =>
+      'Lösen Sie 3x3 Rubik\'s Cubes mit Schritt-für-Schritt-Lösungen. Enthält 2D- und 3D-Würfelvisualisierung, manuelle Würfeleingabe und automatische Lösungsalgorithmen.';
+
+  @override
   String get ready => 'Bereit';
 
   @override

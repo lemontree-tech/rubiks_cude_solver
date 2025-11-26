@@ -12,6 +12,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => '루빅스 큐브 솔버';
 
   @override
+  String get appDescription =>
+      '단계별 솔루션으로 3x3 루빅스 큐브를 해결합니다. 2D 및 3D 큐브 시각화, 수동 큐브 입력 및 자동 해결 알고리즘을 제공합니다.';
+
+  @override
   String get ready => '준비됨';
 
   @override

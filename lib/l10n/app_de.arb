@@ -1,6 +1,7 @@
 {
   "@@locale": "de",
   "appTitle": "Rubik's Cube Löser",
+  "appDescription": "Lösen Sie 3x3 Rubik's Cubes mit Schritt-für-Schritt-Lösungen. Enthält 2D- und 3D-Würfelvisualisierung, manuelle Würfeleingabe und automatische Lösungsalgorithmen.",
   "ready": "Bereit",
   "scrambled": "Gemischt",
   "solving": "Lösen...",

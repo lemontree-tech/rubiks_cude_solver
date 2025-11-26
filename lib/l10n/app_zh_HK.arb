@@ -1,6 +1,7 @@
 {
   "@@locale": "zh_HK",
   "appTitle": "扭計骰 Solver",
+  "appDescription": "用 step-by-step solution 解決 3x3 扭計骰。有 2D 同 3D 視覺化、手動輸入扭計骰、同自動 solving algorithms。",
   "ready": "Ready",
   "scrambled": "已打亂",
   "solving": "Solving 緊...",

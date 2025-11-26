@@ -1,0 +1,6 @@
+/* App Display Name */
+CFBundleDisplayName = "Rubik Solver";
+
+/* App Description (for App Store) */
+CFBundleName = "Rubik Solver";
+

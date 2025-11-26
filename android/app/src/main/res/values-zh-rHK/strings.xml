@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">扭計骰 Solver</string>
+    <string name="app_description">用 step-by-step solution 解決 3x3 扭計骰。有 2D 同 3D 視覺化、手動輸入扭計骰、同自動 solving algorithms。</string>
+</resources>
+

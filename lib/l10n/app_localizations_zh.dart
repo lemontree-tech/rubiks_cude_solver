@@ -12,6 +12,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => '魔方求解器';
 
   @override
+  String get appDescription => '使用分步解决方案解决3x3魔方。具有2D和3D立方体可视化、手动魔方输入和自动求解算法。';
+
+  @override
   String get ready => '就绪';
 
   @override
@@ -113,6 +116,9 @@ class AppLocalizationsZhCn extends AppLocalizationsZh {
 
   @override
   String get appTitle => '魔方求解器';
+
+  @override
+  String get appDescription => '使用分步解决方案解决3x3魔方。具有2D和3D立方体可视化、手动魔方输入和自动求解算法。';
 
   @override
   String get ready => '就绪';
@@ -218,6 +224,10 @@ class AppLocalizationsZhHk extends AppLocalizationsZh {
   String get appTitle => '扭計骰 Solver';
 
   @override
+  String get appDescription =>
+      '用 step-by-step solution 解決 3x3 扭計骰。有 2D 同 3D 視覺化、手動輸入扭計骰、同自動 solving algorithms。';
+
+  @override
   String get ready => 'Ready';
 
   @override
@@ -319,6 +329,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get appTitle => '魔方求解器';
+
+  @override
+  String get appDescription => '使用分步解決方案解決3x3魔方。具有2D和3D立方體可視化、手動魔方輸入和自動求解算法。';
 
   @override
   String get ready => '就緒';

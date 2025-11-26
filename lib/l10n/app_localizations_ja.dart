@@ -12,6 +12,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => 'ルービックキューブソルバー';
 
   @override
+  String get appDescription =>
+      'ステップバイステップのソリューションで3x3ルービックキューブを解決します。2Dおよび3Dキューブの視覚化、手動キューブ入力、自動解決アルゴリズムを備えています。';
+
+  @override
   String get ready => '準備完了';
 
   @override

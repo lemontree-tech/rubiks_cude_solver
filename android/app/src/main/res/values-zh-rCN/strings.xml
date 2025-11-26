@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">魔方求解器</string>
+    <string name="app_description">使用分步解决方案解决3x3魔方。具有2D和3D立方体可视化、手动魔方输入和自动求解算法。</string>
+</resources>
+
