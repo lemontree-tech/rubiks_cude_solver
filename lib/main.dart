@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:rubiks_cube_solver/l10n/app_localizations.dart';
 import 'models/cube.dart';
 import 'services/solver.dart';
 import 'widgets/cube_display_2d.dart';
@@ -14,8 +16,36 @@ void main() {
 class RubiksCubeSolverApp extends StatelessWidget {
   const RubiksCubeSolverApp({super.key});
 
+  // Allow locale override via environment variable for testing
+  static Locale? _getLocaleOverride() {
+    const localeOverride = String.fromEnvironment('FLUTTER_LOCALE');
+    if (localeOverride.isNotEmpty) {
+      // Parse locale string like "zh_HK" or "zh-HK" or "zh"
+      final parts = localeOverride.replaceAll('-', '_').split('_');
+      if (parts.length == 2) {
+        final locale = Locale(parts[0], parts[1]);
+        debugPrint('Locale override: ${locale.languageCode}_${locale.countryCode}');
+        return locale;
+      } else if (parts.length == 1) {
+        final locale = Locale(parts[0]);
+        debugPrint('Locale override: ${locale.languageCode}');
+        return locale;
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final localeOverride = _getLocaleOverride();
+    
+    // Debug: Print what locale will be used
+    if (localeOverride != null) {
+      debugPrint('Using locale override: ${localeOverride.languageCode}_${localeOverride.countryCode ?? "null"}');
+    } else {
+      debugPrint('No locale override, using device locale');
+    }
+    
     return MaterialApp(
       title: 'Rubik Solver',
       theme: ThemeData(
@@ -23,6 +53,53 @@ class RubiksCubeSolverApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF121212),
         useMaterial3: true,
       ),
+      // Override locale if specified via --dart-define
+      locale: localeOverride,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English (default fallback)
+        Locale('zh', 'CN'), // Chinese Simplified
+        Locale('zh', 'HK'), // Chinese Traditional Hong Kong
+        Locale('zh', 'TW'), // Chinese Traditional Taiwan
+        Locale('ja'), // Japanese
+        Locale('ko'), // Korean
+        Locale('es'), // Spanish
+        Locale('fr'), // French
+        Locale('de'), // German
+        Locale('pt', 'BR'), // Portuguese Brazil
+      ],
+      // Fallback to English if device locale is not supported
+      localeResolutionCallback: localeOverride != null
+          ? null // Disable resolution callback when locale is overridden
+          : (locale, supportedLocales) {
+              // If device locale is null, use English
+              if (locale == null) {
+                return const Locale('en');
+              }
+              
+              // Check for exact match (language + country)
+              for (final supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode &&
+                    supportedLocale.countryCode == locale.countryCode) {
+                  return supportedLocale;
+                }
+              }
+              
+              // Check for language code match (e.g., zh without country)
+              for (final supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+              
+              // Fallback to English (first in the list)
+              return const Locale('en');
+            },
       home: const CubeSolverPage(),
       debugShowCheckedModeBanner: false,
     );
@@ -54,22 +131,24 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
 
   void _scrambleCube() {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       cube = RubiksCube();
       cube.scramble(25);
       solution = [];
       appliedMovesCount = 0;
       isAutoApplying = false;
-      statusMessage = 'Scrambled';
+      statusMessage = l10n.scrambled;
     });
   }
 
   void _solveCube() async {
     if (isSolving) return;
+    final l10n = AppLocalizations.of(context)!;
 
     setState(() {
       isSolving = true;
-      statusMessage = 'Solving...';
+      statusMessage = l10n.solving;
       solution = [];
       appliedMovesCount = 0;
       isAutoApplying = false;
@@ -83,9 +162,9 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
         solution = moves;
         appliedMovesCount = 0;
         if (solution.isEmpty) {
-          statusMessage = 'Already solved or no solution found';
+          statusMessage = l10n.alreadySolved;
         } else {
-          statusMessage = '${solution.length} moves found';
+          statusMessage = l10n.movesFound(solution.length);
         }
         isSolving = false;
       });
@@ -93,27 +172,29 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       print('Solve error: $e');
       print('Stack: $stackTrace');
       setState(() {
-        statusMessage = 'Error: ${e.toString()}';
+        statusMessage = l10n.error(e.toString());
         isSolving = false;
       });
     }
   }
 
   void _closeSolution() {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       solution = [];
       appliedMovesCount = 0;
       isAutoApplying = false;
-      statusMessage = 'Ready';
+      statusMessage = l10n.ready;
     });
   }
 
   void _startAutoApply() async {
     if (isAutoApplying || solution.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
 
     setState(() {
       isAutoApplying = true;
-      statusMessage = 'Auto applying...';
+      statusMessage = l10n.solving;
     });
 
     while (appliedMovesCount < solution.length && isAutoApplying) {
@@ -124,43 +205,46 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       setState(() {
         cube.applyMove(solution[appliedMovesCount]);
         appliedMovesCount++;
-        statusMessage = 'Auto: $appliedMovesCount / ${solution.length}';
+        statusMessage = l10n.autoProgress(appliedMovesCount, solution.length);
       });
     }
 
     setState(() {
       isAutoApplying = false;
       if (appliedMovesCount >= solution.length) {
-        statusMessage = 'Solution complete';
+        statusMessage = l10n.solutionComplete;
       } else {
-        statusMessage = 'Auto apply stopped';
+        statusMessage = l10n.autoApplyStopped;
       }
     });
   }
 
   void _stopAutoApply() {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       isAutoApplying = false;
       if (appliedMovesCount > 0) {
-        statusMessage = 'Step $appliedMovesCount / ${solution.length}';
+        statusMessage = l10n.stepProgress(appliedMovesCount, solution.length);
       } else {
-        statusMessage = '${solution.length} moves found';
+        statusMessage = l10n.movesFound(solution.length);
       }
     });
   }
 
   void _applyNextStep() {
     if (appliedMovesCount < solution.length && !isAutoApplying) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         cube.applyMove(solution[appliedMovesCount]);
         appliedMovesCount++;
-        statusMessage = 'Step $appliedMovesCount / ${solution.length}';
+        statusMessage = l10n.stepProgress(appliedMovesCount, solution.length);
       });
     }
   }
 
   void _undoLastStep() {
     if (appliedMovesCount > 0 && !isAutoApplying) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         appliedMovesCount--;
         // Apply inverse move to undo
@@ -168,9 +252,9 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
         final inverseMove = _getInverseMove(move);
         cube.applyMove(inverseMove);
         if (appliedMovesCount > 0) {
-          statusMessage = 'Step $appliedMovesCount / ${solution.length}';
+          statusMessage = l10n.stepProgress(appliedMovesCount, solution.length);
         } else {
-          statusMessage = '${solution.length} moves found';
+          statusMessage = l10n.movesFound(solution.length);
         }
       });
     }
@@ -190,12 +274,13 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
 
   void _resetCube() {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       cube = RubiksCube();
       solution = [];
       appliedMovesCount = 0;
       isAutoApplying = false;
-      statusMessage = 'Ready';
+      statusMessage = l10n.ready;
     });
   }
 
@@ -212,18 +297,31 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
 
   void _onManualCubeInput(RubiksCube newCube) {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       cube = newCube;
       solution = [];
       appliedMovesCount = 0;
       isAutoApplying = false;
-      statusMessage = 'Custom cube loaded';
+      statusMessage = l10n.customCubeLoaded;
       showManualInput = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    // Initialize status message if it's still the default
+    if (statusMessage == 'Ready') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            statusMessage = l10n.ready;
+          });
+        }
+      });
+    }
+    
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: Stack(
@@ -238,9 +336,9 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Rubik Solver',
-                    style: TextStyle(
+                  Text(
+                    l10n.appTitle,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w300,
                       color: Colors.white,
@@ -268,13 +366,13 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildModeButton('2D', !is3DMode, () {
+                  _buildModeButton(l10n.display2D, !is3DMode, () {
                     setState(() {
                       is3DMode = false;
                     });
                   }),
                   const SizedBox(width: 12),
-                  _buildModeButton('3D', is3DMode, () {
+                  _buildModeButton(l10n.display3D, is3DMode, () {
                     setState(() {
                       is3DMode = true;
                     });

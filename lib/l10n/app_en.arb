@@ -1,0 +1,75 @@
+{
+  "@@locale": "en",
+  "appTitle": "Rubik Solver",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "ready": "Ready",
+  "scrambled": "Scrambled",
+  "solving": "Solving...",
+  "movesFound": "{count} moves found",
+  "@movesFound": {
+    "description": "Number of solution moves found",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alreadySolved": "Already solved or no solution found",
+  "error": "Error: {message}",
+  "@error": {
+    "description": "Error message",
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "solutionComplete": "Solution complete",
+  "autoApplyStopped": "Auto apply stopped",
+  "stepProgress": "Step {current} / {total}",
+  "@stepProgress": {
+    "description": "Step progress indicator",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "autoProgress": "Auto: {current} / {total}",
+  "@autoProgress": {
+    "description": "Auto apply progress",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "customCubeLoaded": "Custom cube loaded",
+  "scramble": "Scramble",
+  "solve": "Solve",
+  "reset": "Reset",
+  "close": "Close",
+  "cancel": "Cancel",
+  "saveAndValidate": "Save & Validate",
+  "manualControls": "Manual Controls",
+  "solution": "Solution",
+  "undo": "◀ Undo",
+  "apply": "Apply ▶",
+  "auto": "▶ Auto",
+  "stop": "⏸ Stop",
+  "manualCubeInput": "Manual Cube Input",
+  "tapToFocus": "Tap stickers to focus, select color to change",
+  "selectColor": "Select Color",
+  "invalidCube": "Invalid cube configuration. Please check colors.",
+  "display2D": "2D",
+  "display3D": "3D"
+}
+

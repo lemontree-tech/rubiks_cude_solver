@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rubiks_cube_solver/l10n/app_localizations.dart';
 
 class SolutionPanel extends StatelessWidget {
   final List<String> solution;
@@ -23,6 +24,7 @@ class SolutionPanel extends StatelessWidget {
     if (solution.isEmpty) {
       return const SizedBox.shrink();
     }
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -38,9 +40,9 @@ class SolutionPanel extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Solution',
-                style: TextStyle(
+              Text(
+                l10n.solution,
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.white54,
                   fontWeight: FontWeight.w500,
@@ -90,7 +92,7 @@ class SolutionPanel extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildStepButton(
-                  '◀ Undo',
+                  l10n.undo,
                   Icons.undo,
                   onUndo,
                 ),
@@ -98,7 +100,7 @@ class SolutionPanel extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildStepButton(
-                  'Apply ▶',
+                  l10n.apply,
                   Icons.redo,
                   onApplyNext,
                 ),
@@ -106,7 +108,7 @@ class SolutionPanel extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildStepButton(
-                  isAutoApplying ? '⏸ Stop' : '▶ Auto',
+                  isAutoApplying ? l10n.stop : l10n.auto,
                   isAutoApplying ? Icons.pause : Icons.play_arrow,
                   onAutoApply,
                 ),

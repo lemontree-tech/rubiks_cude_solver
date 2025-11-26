@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rubiks_cube_solver/l10n/app_localizations.dart';
 
 class GameControls extends StatelessWidget {
   final VoidCallback onScramble;
@@ -26,6 +27,7 @@ class GameControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Main buttons
@@ -36,7 +38,7 @@ class GameControls extends StatelessWidget {
               Expanded(
                 child: _buildButton(
                   icon: Icons.shuffle,
-                  label: 'Scramble',
+                  label: l10n.scramble,
                   onPressed: isSolving ? null : onScramble,
                 ),
               ),
@@ -44,7 +46,7 @@ class GameControls extends StatelessWidget {
               Expanded(
                 child: _buildButton(
                   icon: Icons.auto_fix_high,
-                  label: 'Solve',
+                  label: l10n.solve,
                   onPressed: isSolving ? null : onSolve,
                   isLoading: isSolving,
                 ),
@@ -54,12 +56,12 @@ class GameControls extends StatelessWidget {
                 child: onCloseSolution != null
                     ? _buildButton(
                         icon: Icons.close,
-                        label: 'Close',
+                        label: l10n.close,
                         onPressed: onCloseSolution,
                       )
                     : _buildButton(
                         icon: Icons.refresh,
-                        label: 'Reset',
+                        label: l10n.reset,
                         onPressed: onReset,
                       ),
               ),
@@ -88,7 +90,7 @@ class GameControls extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Manual Controls',
+                          l10n.manualControls,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white70,

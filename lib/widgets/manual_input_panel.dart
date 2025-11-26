@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rubiks_cube_solver/l10n/app_localizations.dart';
 import '../models/cube.dart';
 
 class ManualInputPanel extends StatefulWidget {
@@ -125,7 +126,8 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
     _moveToNextSticker();
   }
 
-  void _validateAndSave() {
+  void _validateAndSave(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     try {
       // Convert current faces to facelet string
       final faceletString = widget.initialCube.toFaceletString(_currentFaces);
@@ -138,18 +140,19 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
         widget.onFinish(newCube);
       } else {
         setState(() {
-          _validationMessage = 'Invalid cube configuration. Please check colors.';
+          _validationMessage = l10n.invalidCube;
         });
       }
     } catch (e) {
       setState(() {
-        _validationMessage = 'Error: ${e.toString()}';
+        _validationMessage = l10n.error(e.toString());
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       color: Colors.black.withOpacity(0.85),
       child: Center(
@@ -159,14 +162,14 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Manual Cube Input',
-                  style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.manualCubeInput,
+                  style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Tap stickers to focus, select color to change',
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                Text(
+                  l10n.tapToFocus,
+                  style: const TextStyle(fontSize: 14, color: Colors.white70),
                 ),
                 const SizedBox(height: 20),
                 Padding(
@@ -191,9 +194,9 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildButton('Cancel', widget.onCancel, Colors.grey[700]!),
+                    _buildButton(l10n.cancel, widget.onCancel, Colors.grey[700]!),
                     const SizedBox(width: 20),
-                    _buildButton('Save & Validate', _validateAndSave, Colors.green[700]!),
+                    _buildButton(l10n.saveAndValidate, () => _validateAndSave(context), Colors.green[700]!),
                   ],
                 ),
               ],
@@ -363,53 +366,58 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
   }
 
   Widget _buildColorPicker() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'Select Color',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white70,
-              fontWeight: FontWeight.w500,
-            ),
+    return Builder(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: FaceColor.values.map((color) {
-              return GestureDetector(
-                onTap: () => _setColor(color),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: _getColorForFaceColor(color),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
+          child: Column(
+            children: [
+              Text(
+                l10n.selectColor,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
                 ),
-              );
-            }).toList(),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: FaceColor.values.map((color) {
+                  return GestureDetector(
+                    onTap: () => _setColor(color),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: _getColorForFaceColor(color),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
