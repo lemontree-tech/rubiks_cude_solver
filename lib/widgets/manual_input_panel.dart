@@ -20,11 +20,22 @@ class ManualInputPanel extends StatefulWidget {
 class _ManualInputPanelState extends State<ManualInputPanel> {
   late List<List<List<FaceColor>>> _currentFaces;
   String _validationMessage = '';
+  int? _focusedFaceIndex;
+  int? _focusedRow;
+  int? _focusedCol;
 
   @override
   void initState() {
     super.initState();
     _currentFaces = _deepCopyFaces(widget.initialCube.faces);
+    // Auto-focus the first non-center sticker (top-left of first face)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _focusedFaceIndex = 0; // Up face
+        _focusedRow = 0;
+        _focusedCol = 0; // Top-left sticker
+      });
+    });
   }
 
   List<List<List<FaceColor>>> _deepCopyFaces(List<List<List<FaceColor>>> original) {
@@ -33,12 +44,85 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
     ).toList();
   }
 
-  void _toggleColor(int faceIndex, int row, int col) {
+  void _onStickerTap(int faceIndex, int row, int col) {
+    // Center stickers are unfocusable and unchangeable
+    if (row == 1 && col == 1) {
+      return;
+    }
+    
     setState(() {
-      final currentColor = _currentFaces[faceIndex][row][col];
-      _currentFaces[faceIndex][row][col] = FaceColor.values[(currentColor.index + 1) % FaceColor.values.length];
+      _focusedFaceIndex = faceIndex;
+      _focusedRow = row;
+      _focusedCol = col;
+      _validationMessage = ''; // Clear message on focus change
+    });
+  }
+
+  void _moveToNextSticker() {
+    if (_focusedFaceIndex == null || _focusedRow == null || _focusedCol == null) {
+      return;
+    }
+    
+    int nextRow = _focusedRow!;
+    int nextCol = _focusedCol! + 1;
+    int nextFaceIndex = _focusedFaceIndex!;
+    
+    if (nextCol >= 3) {
+      nextCol = 0;
+      nextRow++;
+      if (nextRow >= 3) {
+        nextRow = 0;
+        // Move to next face
+        nextFaceIndex = _getNextFaceIndex(nextFaceIndex);
+      }
+    }
+    
+    // Skip center stickers
+    while (nextRow == 1 && nextCol == 1) {
+      nextCol++;
+      if (nextCol >= 3) {
+        nextCol = 0;
+        nextRow++;
+        if (nextRow >= 3) {
+          nextRow = 0;
+          nextFaceIndex = _getNextFaceIndex(nextFaceIndex);
+        }
+      }
+    }
+    
+    setState(() {
+      _focusedFaceIndex = nextFaceIndex;
+      _focusedRow = nextRow;
+      _focusedCol = nextCol;
+    });
+  }
+
+  int _getNextFaceIndex(int currentFaceIndex) {
+    // Face order: 0=Up, 1=Down, 2=Front, 3=Back, 4=Right, 5=Left
+    // Navigate in order: Up -> Left -> Front -> Right -> Back -> Down -> Up
+    final faceOrder = [0, 5, 2, 4, 3, 1]; // Top, Left, Front, Right, Back, Bottom
+    final currentIndex = faceOrder.indexOf(currentFaceIndex);
+    final nextIndex = (currentIndex + 1) % faceOrder.length;
+    return faceOrder[nextIndex];
+  }
+
+  void _setColor(FaceColor color) {
+    if (_focusedFaceIndex == null || _focusedRow == null || _focusedCol == null) {
+      return;
+    }
+    
+    // Center stickers are unchangeable
+    if (_focusedRow == 1 && _focusedCol == 1) {
+      return;
+    }
+    
+    setState(() {
+      _currentFaces[_focusedFaceIndex!][_focusedRow!][_focusedCol!] = color;
       _validationMessage = ''; // Clear message on color change
     });
+    
+    // Auto-focus next sticker after setting color
+    _moveToNextSticker();
   }
 
   void _validateAndSave() {
@@ -81,7 +165,7 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Tap stickers to change colors',
+                  'Tap stickers to focus, select color to change',
                   style: TextStyle(fontSize: 14, color: Colors.white70),
                 ),
                 const SizedBox(height: 20),
@@ -90,6 +174,11 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
                   child: _buildCubeInputGrid(),
                 ),
                 const SizedBox(height: 20),
+                // Color picker - show when a face is focused
+                if (_focusedFaceIndex != null)
+                  _buildColorPicker(),
+                if (_focusedFaceIndex != null)
+                  const SizedBox(height: 20),
                 if (_validationMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
@@ -181,11 +270,15 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
   }
 
   Widget _buildFace(List<List<FaceColor>> face, double stickerSize, int faceIndex) {
+    final isFocused = _focusedFaceIndex == faceIndex;
+    
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
+          color: isFocused 
+              ? Colors.blue.withOpacity(0.8)
+              : Colors.white.withOpacity(0.2),
+          width: isFocused ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(4),
       ),
@@ -195,9 +288,12 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(3, (j) {
+              final isStickerFocused = isFocused && _focusedRow == i && _focusedCol == j;
+              final isCenter = i == 1 && j == 1;
+              
               return GestureDetector(
-                onTap: () => _toggleColor(faceIndex, i, j),
-                child: _buildSticker(face[i][j], stickerSize),
+                onTap: () => _onStickerTap(faceIndex, i, j),
+                child: _buildSticker(face[i][j], stickerSize, isStickerFocused, isCenter),
               );
             }),
           );
@@ -206,7 +302,7 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
     );
   }
 
-  Widget _buildSticker(FaceColor faceColor, double size) {
+  Widget _buildSticker(FaceColor faceColor, double size, bool isFocused, bool isCenter) {
     Color displayColor;
     switch (faceColor) {
       case FaceColor.white:
@@ -236,12 +332,102 @@ class _ManualInputPanelState extends State<ManualInputPanel> {
       decoration: BoxDecoration(
         color: displayColor,
         border: Border.all(
-          color: Colors.black.withOpacity(0.2),
-          width: 0.5,
+          color: isFocused
+              ? Colors.blue
+              : isCenter
+                  ? Colors.grey.withOpacity(0.5)
+                  : Colors.black.withOpacity(0.2),
+          width: isFocused ? 2 : (isCenter ? 1 : 0.5),
         ),
         borderRadius: BorderRadius.circular(2),
+        boxShadow: isFocused
+            ? [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.5),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: isCenter
+          ? Center(
+              child: Icon(
+                Icons.lock,
+                size: size * 0.4,
+                color: Colors.grey.withOpacity(0.7),
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildColorPicker() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Select Color',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white70,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: FaceColor.values.map((color) {
+              return GestureDetector(
+                onTap: () => _setColor(color),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: _getColorForFaceColor(color),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
+  }
+
+  Color _getColorForFaceColor(FaceColor faceColor) {
+    switch (faceColor) {
+      case FaceColor.white:
+        return Colors.white;
+      case FaceColor.yellow:
+        return const Color(0xFFFFEB3B);
+      case FaceColor.red:
+        return const Color(0xFFE53935);
+      case FaceColor.orange:
+        return const Color(0xFFFF6F00);
+      case FaceColor.green:
+        return const Color(0xFF4CAF50);
+      case FaceColor.blue:
+        return const Color(0xFF2196F3);
+    }
   }
 
   Widget _buildButton(String text, VoidCallback onPressed, Color bgColor) {
