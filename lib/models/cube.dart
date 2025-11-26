@@ -8,6 +8,19 @@ class RubiksCube {
 
   RubiksCube.copy(RubiksCube other) : _cube = other._cube;
 
+  // Private constructor for factory
+  RubiksCube._fromCube(this._cube);
+
+  // Factory to create from facelet string
+  factory RubiksCube.fromFacelets(String facelets) {
+    try {
+      final cuberCube = Cube.from(facelets);
+      return RubiksCube._fromCube(cuberCube);
+    } catch (e) {
+      throw ArgumentError('Invalid facelet string: $e');
+    }
+  }
+
   // Get the internal cube
   Cube get cube => _cube;
 
@@ -16,6 +29,15 @@ class RubiksCube {
 
   // Get cube definition for state comparison
   String get definition => _cube.definition;
+
+  // Check if cube is valid and solvable
+  bool get isValid {
+    try {
+      return _cube.isOk;
+    } catch (e) {
+      return false;
+    }
+  }
 
   void scramble(int moves) {
     _cube = Algorithm.scramble(n: moves).apply(Cube.solved);
@@ -101,6 +123,40 @@ class RubiksCube {
 
   RubiksCube copy() {
     return RubiksCube.copy(this);
+  }
+
+  // Convert face representation to facelet string for cuber library
+  // Order: U (0) R (4) F (2) D (1) L (5) B (3)
+  String toFaceletString(List<List<List<FaceColor>>> customFaces) {
+    String result = '';
+    final faceOrder = [0, 4, 2, 1, 5, 3]; // U, R, F, D, L, B
+    
+    for (final faceIndex in faceOrder) {
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          result += _faceColorToChar(customFaces[faceIndex][i][j]);
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  String _faceColorToChar(FaceColor color) {
+    switch (color) {
+      case FaceColor.white:
+        return 'U';
+      case FaceColor.yellow:
+        return 'D';
+      case FaceColor.red:
+        return 'F';
+      case FaceColor.orange:
+        return 'B';
+      case FaceColor.green:
+        return 'R';
+      case FaceColor.blue:
+        return 'L';
+    }
   }
 }
 

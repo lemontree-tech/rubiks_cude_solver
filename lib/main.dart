@@ -5,6 +5,7 @@ import 'widgets/cube_display_2d.dart';
 import 'widgets/cube_display_3d.dart';
 import 'widgets/game_controls.dart';
 import 'widgets/solution_panel.dart';
+import 'widgets/manual_input_panel.dart';
 
 void main() {
   runApp(const RubiksCubeSolverApp());
@@ -44,6 +45,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   String statusMessage = 'Ready';
   bool showManualControls = false;
   bool is3DMode = false;
+  bool showManualInput = false;
 
   @override
   void initState() {
@@ -203,12 +205,31 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
     });
   }
 
+  void _toggleManualInput() {
+    setState(() {
+      showManualInput = !showManualInput;
+    });
+  }
+
+  void _onManualCubeInput(RubiksCube newCube) {
+    setState(() {
+      cube = newCube;
+      solution = [];
+      appliedMovesCount = 0;
+      isAutoApplying = false;
+      statusMessage = 'Custom cube loaded';
+      showManualInput = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      body: SafeArea(
-        child: Column(
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
           children: [
             // Simple header
             Padding(
@@ -217,13 +238,24 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Rubik Solver',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    children: [
+                      const Text(
+                        'Rubik Solver',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      IconButton(
+                        icon: const Icon(Icons.edit, size: 20),
+                        onPressed: _toggleManualInput,
+                        color: Colors.white70,
+                        tooltip: 'Manual Input',
+                      ),
+                    ],
                   ),
                   Flexible(
                     child: Text(
@@ -313,6 +345,16 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
             const SizedBox(height: 20),
           ],
         ),
+      ),
+          
+          // Manual input overlay
+          if (showManualInput)
+            ManualInputPanel(
+              initialCube: cube,
+              onFinish: _onManualCubeInput,
+              onCancel: _toggleManualInput,
+            ),
+        ],
       ),
     );
   }
