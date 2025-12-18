@@ -8,7 +8,7 @@
 PRODUCT_NAME = rubiks_cube_solver
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.rubiks.rubiksCubeSolver
+PRODUCT_BUNDLE_IDENTIFIER = com.lt.rubiks
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.rubiks. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 com.lt. All rights reserved.
