@@ -18,6 +18,18 @@ This repository includes a simple GitHub Pages website. Follow these steps to en
    - Usually takes 1-2 minutes
    - Your site will be available at: `https://lemontree-tech.github.io/rubiks_cude_solver/`
 
+## Important: Correct URLs
+
+After enabling GitHub Pages, your URLs will be:
+
+- **Main site**: `https://lemontree-tech.github.io/rubiks_cude_solver/`
+- **Privacy Policy**: `https://lemontree-tech.github.io/rubiks_cude_solver/PRIVACY.md` (if you add it to docs folder)
+  - OR: `https://github.com/lemontree-tech/rubiks_cude_solver/blob/main/PRIVACY.md` (GitHub file view)
+- **License**: `https://lemontree-tech.github.io/rubiks_cude_solver/LICENSE` (if you add it to docs folder)
+  - OR: `https://github.com/lemontree-tech/rubiks_cude_solver/blob/main/LICENSE` (GitHub file view)
+
+**Note**: The repository name (`rubiks_cude_solver`) must be in the URL!
+
 ## What's Included
 
 - **`docs/index.html`**: Main landing page with app information
