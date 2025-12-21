@@ -1,6 +1,6 @@
 {
   "@@locale": "pt_BR",
-  "appTitle": "Solucionador de Cubo Mágico",
+  "appTitle": "Cubo Mágico Solver",
   "appDescription": "Resolva cubos mágicos 3x3 com soluções passo a passo. Inclui visualização 2D e 3D do cubo, entrada manual do cubo e algoritmos de resolução automática.",
   "ready": "Pronto",
   "scrambled": "Embaralhado",

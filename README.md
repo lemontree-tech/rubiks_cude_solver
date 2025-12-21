@@ -1,31 +1,70 @@
-# Rubik's Cube Solver - Flutter Mini App
+# Rubik Solver
 
-A Flutter application for solving 3x3 Rubik's cubes. This mini-app provides an interactive interface to visualize, scramble, and solve Rubik's cubes.
+<div align="center">
 
-## Features
+![Rubik Solver](assets/icon/icon.png)
 
-- **3D Cube Visualization**: View the cube in an unfolded net format showing all 6 faces
-- **Scramble Function**: Randomly scramble the cube with 25 random moves
-- **Solver Algorithm**: Automatically solve the cube using a depth-first search algorithm
-- **Manual Controls**: Apply individual face rotations manually
-- **Solution Display**: View the sequence of moves needed to solve the cube
-- **Apply Solution**: Automatically apply the solution moves to solve the cube
+**Solve 3x3 Rubik's cubes with step-by-step solutions**
 
-## Project Structure
+[![iOS](https://img.shields.io/badge/iOS-Available-blue.svg)](https://apps.apple.com)
+[![Android](https://img.shields.io/badge/Android-Available-green.svg)](https://play.google.com)
 
-```
-lib/
-├── main.dart              # Main app entry point
-├── models/
-│   └── cube.dart         # Rubik's cube data model and rotation logic
-├── services/
-│   └── solver.dart       # Cube solving algorithm
-└── widgets/
-    ├── cube_display.dart # Cube visualization widget
-    └── controls.dart     # UI controls widget
-```
+</div>
 
-## Getting Started
+## 📱 About
+
+Rubik Solver is a mobile application that helps you solve 3x3 Rubik's cubes with detailed step-by-step instructions. Perfect for beginners learning to solve the cube and experts looking for efficient solutions.
+
+### Key Features
+
+- 🎯 **Step-by-Step Solutions**: Get detailed instructions to solve any 3x3 Rubik's cube
+- 🎨 **2D & 3D Visualization**: View your cube in both 2D and 3D formats
+- ✋ **Manual Cube Input**: Input your real-life cube configuration and get a solution
+- 🔄 **Automatic Solving**: Advanced algorithms find optimal solutions
+- 🌍 **Multi-language Support**: Available in 9+ languages including English, Chinese, Japanese, Korean, Spanish, French, German, and Portuguese
+- 🎮 **Interactive Controls**: Manual face rotations and step-by-step solution application
+
+## 🚀 Download
+
+- **iOS**: Coming soon on the App Store
+- **Android**: Coming soon on Google Play
+
+## 📖 How to Use
+
+1. **Scramble**: Tap "Scramble" to randomly mix the cube
+2. **Solve**: Tap "Solve" to find the solution steps
+3. **Apply Solution**: Use "Auto" to automatically apply moves, or step through manually
+4. **Manual Input**: Use the edit button to input your real cube configuration
+5. **Visualize**: Switch between 2D and 3D views to better understand the cube state
+
+## 🛠️ Technical Details
+
+- **Framework**: Flutter
+- **Platforms**: iOS, Android
+- **Language**: Dart
+- **Cube Library**: [cuber](https://pub.dev/packages/cuber)
+- **3D Rendering**: [flutter_scene](https://pub.dev/packages/flutter_scene)
+
+## 📋 Requirements
+
+- iOS 13.0 or later
+- Android 5.0 (API 21) or later
+
+## 🔒 Privacy
+
+This app does not collect, store, or transmit any personal data. All cube solving is performed locally on your device.
+
+For more details, see our [Privacy Policy](PRIVACY.md).
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/lemontree-tech/rubiks_cude_solver/issues).
+
+## 👨‍💻 Development
 
 ### Prerequisites
 
@@ -34,57 +73,33 @@ lib/
 
 ### Installation
 
-1. Navigate to the project directory:
 ```bash
-cd rubiks_cube_solver
-```
+# Clone the repository
+git clone https://github.com/lemontree-tech/rubiks_cude_solver.git
+cd rubiks_cude_solver
 
-2. Get Flutter dependencies:
-```bash
+# Install dependencies
 flutter pub get
-```
 
-3. Run the app:
-```bash
+# Run the app
 flutter run
 ```
 
-## Usage
+## 📞 Contact
 
-1. **Scramble**: Tap the "Scramble" button to randomly scramble the cube
-2. **Solve**: Tap the "Solve" button to find a solution (may take a few seconds)
-3. **Apply Solution**: Once a solution is found, tap "Apply Solution" to automatically solve the cube
-4. **Manual Control**: Use the manual controls to rotate individual faces
-5. **Reset**: Tap "Reset to Solved" to return the cube to its solved state
+- **GitHub**: [lemontree-tech/rubiks_cude_solver](https://github.com/lemontree-tech/rubiks_cude_solver)
+- **Issues**: [Report an issue](https://github.com/lemontree-tech/rubiks_cude_solver/issues)
 
-## Cube Notation
+## 🙏 Acknowledgments
 
-The app uses standard Rubik's cube notation:
-- **U**: Rotate Up face clockwise
-- **U'**: Rotate Up face counter-clockwise
-- **D**: Rotate Down face clockwise
-- **D'**: Rotate Down face counter-clockwise
-- **F**: Rotate Front face clockwise
-- **F'**: Rotate Front face counter-clockwise
-- **B**: Rotate Back face clockwise
-- **B'**: Rotate Back face counter-clockwise
-- **R**: Rotate Right face clockwise
-- **R'**: Rotate Right face counter-clockwise
-- **L**: Rotate Left face clockwise
-- **L'**: Rotate Left face counter-clockwise
+- Built with [Flutter](https://flutter.dev)
+- Cube solving algorithms powered by [cuber](https://pub.dev/packages/cuber)
+- 3D rendering with [flutter_scene](https://pub.dev/packages/flutter_scene)
 
-## Technical Details
+---
 
-- The cube is represented as a 3D array (6 faces × 3×3 grid)
-- Face rotations include both the face itself and adjacent edge pieces
-- The solver uses iterative deepening depth-first search
-- The visualization shows the cube in an unfolded net format
+<div align="center">
 
-## Future Improvements
+Made with ❤️ by [LemonTree Tech](https://github.com/lemontree-tech)
 
-- 3D cube visualization with rotation
-- Faster solving algorithm (Kociemba's algorithm)
-- Solution step-by-step animation
-- Save/load cube states
-- Timer for solving speed
-
+</div>

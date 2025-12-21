@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rubik Solver - Solve 3x3 Rubik's cubes with step-by-step solutions">
+    <title>Rubik Solver - Official Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tagline {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: -40px 20px 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .download-btn.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .download-btn.disabled:hover {
+            transform: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+                margin: -20px 10px 20px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div style="font-size: 60px;">🎲</div>
+            </div>
+            <h1>Rubik Solver</h1>
+            <p class="tagline">Solve 3x3 Rubik's cubes with step-by-step solutions</p>
+            <div class="badges">
+                <div class="badge">🎯 Step-by-Step</div>
+                <div class="badge">🎨 2D & 3D View</div>
+                <div class="badge">🌍 Multi-language</div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <section class="section">
+                <h2>About</h2>
+                <p>Rubik Solver is a mobile application that helps you solve 3x3 Rubik's cubes with detailed step-by-step instructions. Perfect for beginners learning to solve the cube and experts looking for efficient solutions.</p>
+            </section>
+            
+            <section class="section">
+                <h2>Features</h2>
+                <div class="features">
+                    <div class="feature">
+                        <h3>🎯 Step-by-Step Solutions</h3>
+                        <p>Get detailed instructions to solve any 3x3 Rubik's cube</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🎨 2D & 3D Visualization</h3>
+                        <p>View your cube in both 2D and 3D formats for better understanding</p>
+                    </div>
+                    <div class="feature">
+                        <h3>✋ Manual Cube Input</h3>
+                        <p>Input your real-life cube configuration and get a solution</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🔄 Automatic Solving</h3>
+                        <p>Advanced algorithms find optimal solutions quickly</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🌍 Multi-language Support</h3>
+                        <p>Available in 9+ languages including English, Chinese, Japanese, Korean, and more</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🎮 Interactive Controls</h3>
+                        <p>Manual face rotations and step-by-step solution application</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2>Download</h2>
+                <p style="text-align: center; margin-bottom: 20px;">Available soon on:</p>
+                <div class="download-buttons">
+                    <a href="#" class="download-btn disabled">📱 App Store (Coming Soon)</a>
+                    <a href="#" class="download-btn disabled">🤖 Google Play (Coming Soon)</a>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h2>Privacy</h2>
+                <p>This app does not collect, store, or transmit any personal data. All cube solving is performed locally on your device.</p>
+                <p><a href="../PRIVACY.md">Read our full Privacy Policy →</a></p>
+            </section>
+            
+            <section class="section">
+                <h2>License</h2>
+                <p>This project is open source and licensed under the MIT License.</p>
+                <p><a href="../LICENSE">View License →</a></p>
+            </section>
+        </div>
+        
+        <footer>
+            <p>Made with ❤️ by <a href="https://github.com/lemontree-tech">LemonTree Tech</a></p>
+            <div class="footer-links">
+                <a href="https://github.com/lemontree-tech/rubiks_cude_solver">GitHub</a>
+                <a href="../README.md">Documentation</a>
+                <a href="../PRIVACY.md">Privacy Policy</a>
+                <a href="../LICENSE">License</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+
