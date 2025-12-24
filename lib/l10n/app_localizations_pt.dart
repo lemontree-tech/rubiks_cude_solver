@@ -118,7 +118,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   AppLocalizationsPtBr() : super('pt_BR');
 
   @override
-  String get appTitle => 'Solucionador de Cubo Mágico';
+  String get appTitle => 'Cubo Mágico Solver';
 
   @override
   String get appDescription =>
