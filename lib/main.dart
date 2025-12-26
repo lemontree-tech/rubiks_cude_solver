@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:rubiks_cube_solver/l10n/app_localizations.dart';
 import 'models/cube.dart';
 import 'services/solver.dart';
@@ -9,7 +11,9 @@ import 'widgets/game_controls.dart';
 import 'widgets/solution_panel.dart';
 import 'widgets/manual_input_panel.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const RubiksCubeSolverApp());
 }
 
@@ -128,15 +132,27 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   bool showManualControls = false;
   bool is3DMode = false;
   bool showManualInput = false;
+  
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
     super.initState();
     cube = RubiksCube();
+    _logScreenView('main_screen');
+  }
+  
+  void _logScreenView(String screenName) {
+    _analytics.logScreenView(screenName: screenName);
+  }
+  
+  void _logEvent(String eventName, {Map<String, Object>? parameters}) {
+    _analytics.logEvent(name: eventName, parameters: parameters);
   }
 
   void _scrambleCube() {
     final l10n = AppLocalizations.of(context)!;
+    _logEvent('scramble_cube');
     setState(() {
       cube = RubiksCube();
       cube.scramble(25);
@@ -173,6 +189,12 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
         }
         isSolving = false;
       });
+      
+      // Log solve completion
+      _logEvent('solve_completed', parameters: {
+        'solution_length': solution.length,
+        'was_already_solved': solution.isEmpty,
+      });
     } catch (e, stackTrace) {
       print('Solve error: $e');
       print('Stack: $stackTrace');
@@ -196,6 +218,10 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   void _startAutoApply() async {
     if (isAutoApplying || solution.isEmpty) return;
     final l10n = AppLocalizations.of(context)!;
+    
+    _logEvent('auto_apply_started', parameters: {
+      'solution_length': solution.length,
+    });
 
     setState(() {
       isAutoApplying = true;
@@ -296,6 +322,9 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
 
   void _toggleManualInput() {
+    _logEvent('manual_input_toggled', parameters: {
+      'opened': !showManualInput,
+    });
     setState(() {
       showManualInput = !showManualInput;
     });
@@ -372,12 +401,14 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildModeButton(l10n.display2D, !is3DMode, () {
+                    _logEvent('view_mode_changed', parameters: {'mode': '2d'});
                     setState(() {
                       is3DMode = false;
                     });
                   }),
                   const SizedBox(width: 12),
                   _buildModeButton(l10n.display3D, is3DMode, () {
+                    _logEvent('view_mode_changed', parameters: {'mode': '3d'});
                     setState(() {
                       is3DMode = true;
                     });

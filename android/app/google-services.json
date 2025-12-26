@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493242726790",
+    "project_id": "com-lt-rubiks",
+    "storage_bucket": "com-lt-rubiks.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493242726790:android:8053675ce55016cf5f5407",
+        "android_client_info": {
+          "package_name": "com.lt.rubiks"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABb39z9wzhxGhytrSWTMg0046NANfzDqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
