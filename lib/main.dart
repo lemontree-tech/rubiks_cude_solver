@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,7 +14,19 @@ import 'widgets/manual_input_panel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  
+  // Initialize Firebase (with error handling)
+  try {
+    await Firebase.initializeApp();
+    
+    // Always enable analytics collection (for production tracking)
+    // Analytics is enabled by default, but explicitly enabling ensures it works in all builds
+    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  } catch (e) {
+    // If Firebase fails to initialize, log but don't block app
+    debugPrint('Firebase initialization error: $e');
+  }
+  
   runApp(const RubiksCubeSolverApp());
 }
 
@@ -133,7 +146,14 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   bool is3DMode = false;
   bool showManualInput = false;
   
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+  // Firebase Analytics - nullable in case initialization failed
+  FirebaseAnalytics? get _analytics {
+    try {
+      return FirebaseAnalytics.instance;
+    } catch (e) {
+      return null; // Firebase not initialized
+    }
+  }
 
   @override
   void initState() {
@@ -143,11 +163,11 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   }
   
   void _logScreenView(String screenName) {
-    _analytics.logScreenView(screenName: screenName);
+    _analytics?.logScreenView(screenName: screenName);
   }
   
   void _logEvent(String eventName, {Map<String, Object>? parameters}) {
-    _analytics.logEvent(name: eventName, parameters: parameters);
+    _analytics?.logEvent(name: eventName, parameters: parameters);
   }
 
   void _scrambleCube() {
@@ -166,6 +186,9 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
   void _solveCube() async {
     if (isSolving) return;
     final l10n = AppLocalizations.of(context)!;
+    
+    // Log solve button click
+    _logEvent('solve_button_clicked');
 
     setState(() {
       isSolving = true;
@@ -193,7 +216,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
       // Log solve completion
       _logEvent('solve_completed', parameters: {
         'solution_length': solution.length,
-        'was_already_solved': solution.isEmpty,
+        'was_already_solved': solution.isEmpty ? 1 : 0, // Convert bool to int
       });
     } catch (e, stackTrace) {
       print('Solve error: $e');
@@ -252,6 +275,13 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
 
   void _stopAutoApply() {
     final l10n = AppLocalizations.of(context)!;
+    
+    // Log auto apply stop
+    _logEvent('auto_apply_stopped', parameters: {
+      'moves_applied': appliedMovesCount,
+      'total_moves': solution.length,
+    });
+    
     setState(() {
       isAutoApplying = false;
       if (appliedMovesCount > 0) {
@@ -323,7 +353,7 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
 
   void _toggleManualInput() {
     _logEvent('manual_input_toggled', parameters: {
-      'opened': !showManualInput,
+      'opened': (!showManualInput) ? 1 : 0, // Convert bool to int
     });
     setState(() {
       showManualInput = !showManualInput;
@@ -332,6 +362,10 @@ class _CubeSolverPageState extends State<CubeSolverPage> {
 
   void _onManualCubeInput(RubiksCube newCube) {
     final l10n = AppLocalizations.of(context)!;
+    
+    // Log manual input completion
+    _logEvent('manual_input_completed');
+    
     setState(() {
       cube = newCube;
       solution = [];
